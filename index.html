@@ -59,6 +59,9 @@ body.side-off{--sw:0px}
 body.side-off .side{display:none}
 .sidetog{position:fixed;top:50%;left:var(--sw);transform:translateY(-50%);z-index:35;width:20px;height:52px;padding:0;border:1px solid var(--line);border-left:0;border-radius:0 12px 12px 0;background:var(--panel);color:var(--gold);font:600 18px/1 Inter;cursor:pointer;box-shadow:2px 2px 8px rgba(47,42,40,.08)}
 .sidetog:hover{background:var(--panel2)}
+/* collapsed: the tab grows a vertical 'Stylists' label so people know there's more behind it */
+body.side-off .sidetog{height:auto;width:26px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sidetog small{writing-mode:vertical-rl;transform:rotate(180deg);font:600 10px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
 .load{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-top:5px}
 .load i{font-style:normal;font-size:10px;padding:1px 5px;border-radius:6px;background:var(--panel2);color:var(--muted);font-variant-numeric:tabular-nums}
 .load i.on{background:#e3f1ed;color:var(--mint)}
@@ -189,6 +192,34 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .top.show{opacity:1;pointer-events:auto}
 /* tablet */
 @media(max-width:900px){:root{--sw:200px}.sty img{height:78px}}
+/* tablet: fewer, roomier cards with bigger type */
+@media(min-width:641px) and (max-width:1180px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  .card .body{padding:12px 14px 14px;gap:8px}
+  .card .name{font-size:16px}
+  .card a.ig{font-size:13px}
+  .hair{font-size:13px;padding:8px 10px}
+  .hair .t{font-size:11.5px}
+  .suits b{font-size:12px;padding:3px 9px}
+  .fit{font-size:12.5px}
+  .dz{min-height:54px;font-size:13px}
+  .dz select.pick{font-size:13px;padding:6px 8px}
+  .legend{font-size:13px}
+  .controls{gap:12px}
+  .howto>summary{display:block;font-size:13px;font-weight:500;color:var(--gold);cursor:pointer;margin:0 0 12px}
+}
+/* the stylist tab floats on the left edge when the list is hidden, so keep cards clear of it */
+body.side-off .wrap{padding-left:44px}
+/* once scrolled, the sticky bar slims to one line (logos + title) with a Search shortcut, so it never hides the page */
+.hsearch{display:none;position:absolute;right:0;top:50%;transform:translateY(-50%);background:var(--panel2);border:1px solid var(--line);color:var(--gold);border-radius:999px;padding:6px 12px;font:600 12px Inter;cursor:pointer;white-space:nowrap}
+header>div:first-child{position:relative}
+body.scrolled header{padding-top:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+body.scrolled header .sub,body.scrolled .whoami,body.scrolled .stats{display:none}
+body.scrolled .logos{margin-bottom:2px}
+body.scrolled .logos img{height:20px}body.scrolled .logos img.mc{height:17px}
+body.scrolled header h1{font-size:18px}
+body.scrolled .hsearch{display:block}
+body.scrolled header>div:first-child{padding-right:96px}
 /* phone */
 @media(max-width:640px){
   :root{--sw:96px}
@@ -238,17 +269,17 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   .actions{width:100%;order:4}
   .actions .btn{flex:1;padding:9px 6px;font-size:12px}
   .slot h2{font-size:20px}
-  .grid{grid-template-columns:1fr;gap:10px}
+  .grid{grid-template-columns:1fr;gap:14px}
   .card{flex-direction:row;border-radius:14px}
-  .card .ph{flex:0 0 96px;width:96px;aspect-ratio:auto;min-height:100%}
+  .card .ph{flex:0 0 clamp(100px,42%,170px);width:clamp(100px,42%,170px);aspect-ratio:auto;min-height:210px}
   .card .ph img{position:absolute;inset:0}
   .card .ph .noimg b{font-size:26px}
   .card .ph .noimg{font-size:10px}
   .card .no{top:5px;left:5px;font-size:10px;padding:1px 5px}
   .card .fl{top:auto;bottom:5px;right:auto;left:5px;font-size:10px;padding:1px 5px}
-  .card .body{padding:8px 10px 9px;gap:5px}
-  .card .name{font-size:14px;line-height:1.25}
-  .hair{font-size:11px;padding:5px 7px}
+  .card .body{padding:12px 12px 12px;gap:7px}
+  .card .name{font-size:15px;line-height:1.25;overflow-wrap:anywhere}
+  .hair{font-size:12px;padding:7px 9px}
   .hair .t{font-size:10px}
   .dz{min-height:44px}
   .card.over{transform:none}
@@ -280,6 +311,13 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   header{display:contents}
   header>div:first-child{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 12px 8px;border-bottom:1px solid var(--line)}
   .stats{padding:10px 12px 0}
+  body.side-off .wrap{padding-left:34px}
+  body.scrolled header>div:first-child{padding:8px 96px 8px 12px}
+  body.scrolled .logos img{height:14px}body.scrolled .logos img.mc{height:11px}
+  body.scrolled .logos .attria{font-size:9px}
+  body.scrolled header h1{font-size:16px}
+  body.scrolled .stats{display:flex}
+  .hsearch{right:10px}
   .stypanel{gap:10px;padding:10px;border-radius:14px}
   .stypanel>img{width:52px;height:64px}
   .stypanel .spn{font-size:18px}
@@ -308,6 +346,7 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
       <span class="x2">×</span>
       <img src="logos/attria.png" alt="Attria" onerror="this.outerHTML='<span class=&quot;attria&quot;>Attria</span>'">
     </div>
+    <button class="hsearch" id="hSearch" type="button" aria-label="Search">⌕ Search</button>
     <div class="sub">24 September 2026</div>
     <h1>Stylist Allocation</h1>
     <div class="whoami">Allocating as <b id="whoName"></b> · <button type="button" id="whoChange">Not you?</button></div>
@@ -338,7 +377,7 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
     </div>
   </div>
   <details class="howto" id="howto" open><summary>How it works · stylist poll key</summary>
-  <p class="legend">Drag a stylist from the left onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
+  <p class="legend">Pick from "choose a stylist" on any card, or open the stylist list with the › tab on the left and drag a stylist onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
   <p class="legend" id="suitLegend"></p>
   </details>
   <div id="styPanel"></div>
@@ -376,7 +415,7 @@ function loadFor(name){const c={};SLOTS.forEach(s=>c[s]=0);INF.forEach(i=>{if(A[
 
 const SUIT_ICON={'Bouncy Blowdry':'🤎','Frizzy strong hair to polished':'💙','Beach waves':'💜','Straight and sleek':'💛','Short bob hair':'💚','Arabic hair':'🧡','European hair':'❤️'};
 document.getElementById('suitLegend').innerHTML='Stylist poll: '+Object.entries(SUIT_ICON).map(([k,v])=>`${v} ${esc(k)}`).join(' · ');
-if(matchMedia('(max-width:640px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
+if(matchMedia('(max-width:1180px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
 const suitsHTML=i=>(i.suits||[]).length?`<div class="suits" title="Matches the stylist poll">${i.suits.map(k=>`<b>${SUIT_ICON[k]||''} ${esc(k)}</b>`).join('')}</div>`:'';
 // Best fit = stylists whose poll picks (STY[].suits) cover the most of her hair categories; ties go to whoever is lighter in her slot, then the more specialised stylist.
 function bestFit(i){
@@ -531,8 +570,8 @@ function softSelect(sel){
 }
 softSelect($('#stySort'));softSelect($('#infSort'));
 // Sidebar hide/expand, remembered on this device
-function setSide(off){document.body.classList.toggle('side-off',off);$('#sideTog').textContent=off?'›':'‹';$('#sideTog').title=off?'Show stylists':'Hide stylists';$('#sideTog').setAttribute('aria-expanded',!off);try{localStorage.setItem('medicube-side-off',off?'1':'')}catch(e){}}
-let sideOff=false;try{sideOff=localStorage.getItem('medicube-side-off')==='1'}catch(e){}
+function setSide(off){document.body.classList.toggle('side-off',off);$('#sideTog').innerHTML=off?'›<small>View stylists</small>':'‹';$('#sideTog').title=off?'Show stylists':'Hide stylists';$('#sideTog').setAttribute('aria-expanded',!off);try{localStorage.setItem('medicube-side',off?'hidden':'shown')}catch(e){}}
+let sideOff=true;try{sideOff=localStorage.getItem('medicube-side')!=='shown'}catch(e){} // hidden by default until someone opens it on this device
 setSide(sideOff);$('#sideTog').onclick=()=>setSide(!document.body.classList.contains('side-off'));
 document.querySelectorAll('[data-tex]').forEach(b=>b.onclick=()=>{state.tex=state.tex===b.dataset.tex?null:b.dataset.tex;document.querySelectorAll('[data-tex]').forEach(x=>x.classList.toggle('on',x.dataset.tex===state.tex));render()});
 $('[data-f=unassigned]').onclick=e=>{state.unassigned=!state.unassigned;e.target.classList.toggle('on',state.unassigned);render()};
@@ -643,6 +682,9 @@ $('#whoForm').onsubmit=e=>{
 $('#whoChange').onclick=askWho;
 showWho();if(!WHO)askWho();
 
+// Slim sticky bar once scrolled (with a gap between the on/off points so the height change can't make it flicker)
+addEventListener('scroll',()=>{const b=document.body;if(scrollY>220)b.classList.add('scrolled');else if(scrollY<60)b.classList.remove('scrolled')},{passive:true});
+$('#hSearch').onclick=()=>{scrollTo({top:0});document.body.classList.remove('scrolled');setTimeout(()=>$('#q').focus(),60)};
 // Back to top
 $('#top').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 addEventListener('scroll',()=>$('#top').classList.toggle('show',scrollY>600),{passive:true});
