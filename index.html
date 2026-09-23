@@ -152,6 +152,8 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .mstys button img{width:100%;height:58px;object-fit:contain}
 .fit{font-size:11px;color:var(--muted);line-height:1.35}
 .fit b{color:var(--mint);font-weight:600}
+.fit a.fitl{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.fit a.fitl:hover{color:var(--gold)}
 .mstys button.fitb{border-color:#a9d3c8;background:#eef7f4}
 .mstys button.on{border-color:var(--mint);color:var(--mint);box-shadow:0 0 0 1px var(--mint) inset}
 .mstys button small{color:var(--muted);font-size:10px}
@@ -431,7 +433,7 @@ function bestFit(i){
   r.sort((a,b)=>b.m-a.m||a.l-b.l||a.s.suits.length-b.s.suits.length||a.s.name.localeCompare(b.s.name));
   return r.filter(x=>x.m===r[0].m).slice(0,3).map(x=>x.s.name);
 }
-const fitHTML=i=>{const f=bestFit(i);return f.length?`<div class="fit">Best fit: <b>${f.map(esc).join(' · ')}</b></div>`:''};
+const fitHTML=i=>{const f=bestFit(i);return f.length?`<div class="fit">Best fit: <b>${f.map(n=>`<a class="fitl" href="?stylist=${encodeURIComponent(n)}" data-sty="${esc(n)}">${esc(n)}</a>`).join(' · ')}</b></div>`:''};
 const ROLE_RANK={'Senior Stylist':0,'Stylist':1,'Junior Stylist':2,'Blow-Dry Specialist':3};
 let stySort={by:'name',dir:1};
 let infSort={by:'no',dir:1};
@@ -693,6 +695,12 @@ showWho();if(!WHO)askWho();
 // Slim sticky bar once scrolled (with a gap between the on/off points so the height change can't make it flicker)
 addEventListener('scroll',()=>{const b=document.body;if(scrollY>220)b.classList.add('scrolled');else if(scrollY<60)b.classList.remove('scrolled')},{passive:true});
 $('#hSearch').onclick=()=>{scrollTo({top:0});document.body.classList.remove('scrolled');setTimeout(()=>$('#q').focus(),60)};
+// Best-fit names open that stylist's panel (plain links still work for open-in-new-tab)
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a.fitl');if(!a||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  e.preventDefault();if($('#modal').classList.contains('open'))closeM();
+  state.sty=a.dataset.sty;render();scrollTo({top:0,behavior:'smooth'});
+});
 // Back to top
 $('#top').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 addEventListener('scroll',()=>$('#top').classList.toggle('show',scrollY>600),{passive:true});
