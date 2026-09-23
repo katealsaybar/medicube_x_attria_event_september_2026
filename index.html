@@ -137,6 +137,7 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .toast.warn{background:var(--warn)}
 .toast.show{opacity:1}
 .legend{font-size:12px;color:var(--muted)}
+.howto>summary{display:none}
 /* tablet */
 @media(max-width:900px){:root{--sw:200px}.sty img{height:78px}}
 /* phone */
@@ -208,6 +209,20 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   .gal{grid-template-columns:repeat(2,1fr)}
   .gal.ig{grid-template-columns:1fr}
   .toast{left:calc(50% + var(--sw)/2)}
+  /* decluttered phone view */
+  .howto>summary{display:block;font-size:12px;font-weight:500;color:var(--gold);cursor:pointer;margin:0 0 10px}
+  .howto[open]>summary{margin-bottom:4px}
+  header{padding-top:12px;gap:8px}
+  header h1{font-size:19px}
+  .stat{padding:4px}
+  .stat b{font-size:15px}
+  .controls{gap:6px;margin:6px 0 8px}
+  .tab{padding:6px 9px}
+  .chip{padding:5px 10px}
+  input.search{padding:7px 10px;font-size:13px}
+  .actions .btn{padding:7px 6px}
+  .card .suits{display:none}
+  .sty img{height:52px}
 }
 </style>
 </head>
@@ -258,8 +273,10 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
       <button class="btn primary" id="copy">Copy for WhatsApp</button>
     </div>
   </div>
+  <details class="howto" id="howto" open><summary>How it works · stylist poll key</summary>
   <p class="legend">Drag a stylist from the left onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
   <p class="legend" id="suitLegend"></p>
+  </details>
   <div id="slots"></div>
 </div>
 </main>
@@ -284,6 +301,7 @@ function loadFor(name){const c={};SLOTS.forEach(s=>c[s]=0);INF.forEach(i=>{if(A[
 
 const SUIT_ICON={'Bouncy Blowdry':'🤎','Frizzy strong hair to polished':'💙','Beach waves':'💜','Straight and sleek':'💛','Short bob hair':'💚','Arabic hair':'🧡','European hair':'❤️'};
 document.getElementById('suitLegend').innerHTML='Stylist poll: '+Object.entries(SUIT_ICON).map(([k,v])=>`${v} ${esc(k)}`).join(' · ');
+if(matchMedia('(max-width:640px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
 const suitsHTML=i=>(i.suits||[]).length?`<div class="suits" title="Matches the stylist poll">${i.suits.map(k=>`<b>${SUIT_ICON[k]||''} ${esc(k)}</b>`).join('')}</div>`:'';
 // Best fit = stylists whose poll picks (STY[].suits) cover the most of her hair categories; ties go to whoever is lighter in her slot, then the more specialised stylist.
 function bestFit(i){
