@@ -311,7 +311,10 @@ body.scrolled header>div:first-child{padding-right:96px}
   header{display:contents}
   header>div:first-child{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 12px 8px;border-bottom:1px solid var(--line)}
   .stats{padding:10px 12px 0}
-  body.side-off .wrap{padding-left:34px}
+  body.side-off .wrap{padding-left:12px}
+  /* phone: the hidden-sidebar tab becomes a bottom-left pill (opposite the Top button) so nothing needs an extra indent */
+  body.side-off .sidetog{top:auto;bottom:calc(16px + env(safe-area-inset-bottom));left:12px;transform:none;flex-direction:row;height:44px;width:auto;padding:0 14px;gap:6px;border:1px solid var(--line);border-radius:999px;box-shadow:0 6px 18px rgba(47,42,40,.18);font-size:16px}
+  body.side-off .sidetog small{writing-mode:horizontal-tb;transform:none;letter-spacing:.08em}
   body.scrolled header>div:first-child{padding:8px 96px 8px 12px}
   body.scrolled .logos img{height:14px}body.scrolled .logos img.mc{height:11px}
   body.scrolled .logos .attria{font-size:9px}
