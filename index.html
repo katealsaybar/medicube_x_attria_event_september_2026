@@ -36,15 +36,36 @@ img{-webkit-user-drag:none}
 .sortbar{display:flex;gap:6px;align-items:center;margin:0 4px}
 .sortbar span{font-size:11px;color:var(--muted)}
 .sortbar select{flex:1;min-width:0;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:5px 6px;font:500 12px Inter;cursor:pointer}
-.sortbar button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;width:30px;height:28px;font-size:15px;line-height:1;cursor:pointer;color:var(--text)}
-.sortbar button:hover,.sortbar select:hover{border-color:var(--gold)}
+.sortbar>button{background:var(--panel2);border:1px solid var(--line);border-radius:10px;width:30px;height:30px;font-size:15px;line-height:1;cursor:pointer;color:var(--text)}
+.sortbar>button:hover{border-color:var(--gold)}
+/* soft sort menus: the native select stays as the source of truth, this draws a rounded button + menu over it */
+.ss-native{display:none}
+.ss{position:relative;flex:1;min-width:0}
+.ss-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:6px 10px;height:30px;font:500 12px Inter;cursor:pointer;text-align:left}
+.ss-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ss-btn i{font-style:normal;color:var(--muted);font-size:10px}
+.ss-btn:hover,.ss.open .ss-btn{border-color:var(--gold)}
+.ss-list{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:100%;width:max-content;max-width:220px;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 28px rgba(47,42,40,.16);padding:5px;z-index:70}
+.ss.open .ss-list{display:block}
+.ss-list button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--text);border-radius:10px;padding:8px 11px;font:500 12.5px Inter;cursor:pointer;white-space:nowrap}
+.ss-list button:hover{background:var(--panel2)}
+.ss-list button.on{background:#f6e4e7;color:var(--gold)}
+.side .ss-list{max-width:calc(var(--sw) - 12px)}
+.side .ss-list button{white-space:normal}
+.sortbar.inf{margin:0}
+.sortbar.inf .ss{flex:0 0 auto;min-width:132px}
+/* collapsible stylist sidebar */
+body.side-off{--sw:0px}
+body.side-off .side{display:none}
+.sidetog{position:fixed;top:50%;left:var(--sw);transform:translateY(-50%);z-index:35;width:20px;height:52px;padding:0;border:1px solid var(--line);border-left:0;border-radius:0 12px 12px 0;background:var(--panel);color:var(--gold);font:600 18px/1 Inter;cursor:pointer;box-shadow:2px 2px 8px rgba(47,42,40,.08)}
+.sidetog:hover{background:var(--panel2)}
 .load{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-top:5px}
 .load i{font-style:normal;font-size:10px;padding:1px 5px;border-radius:6px;background:var(--panel2);color:var(--muted);font-variant-numeric:tabular-nums}
 .load i.on{background:#e3f1ed;color:var(--mint)}
 .load i.hot{background:#fbe6dc;color:var(--warn)}
 main{margin-left:var(--sw);min-width:0}
 /* header */
-header{padding:24px 28px 8px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;max-width:1300px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:24px 28px 8px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;max-width:1300px}
 .logos{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
 .logos img{display:block;height:30px;width:auto}
 .logos img.mc{height:25px}
@@ -70,7 +91,7 @@ header .sub{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transfor
 .chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;font:500 12px Inter}
 .chip.on{border-color:var(--gold);color:var(--gold)}
 .chip.sty-on{border-color:var(--mint);color:var(--mint)}
-input.search{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font:14px Inter;min-width:200px}
+input.search{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font:14px Inter;min-width:320px}
 .spacer{flex:1}
 .actions{display:flex;gap:8px}
 /* slots */
@@ -138,6 +159,34 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .toast.show{opacity:1}
 .legend{font-size:12px;color:var(--muted)}
 .howto>summary{display:none}
+.dz.set b small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.dz:not(.set){flex-wrap:wrap;gap:4px 6px;padding:6px}
+.dz select.pick{max-width:100%;background:var(--panel2);color:var(--gold);border:1px solid var(--line);border-radius:8px;padding:5px 6px;font:500 12px Inter;cursor:pointer}
+.dz select.pick:hover{border-color:var(--gold)}
+.stat.all{font:inherit;color:inherit;cursor:pointer}
+.stat.all:hover{border-color:var(--gold)}
+.stypanel{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--mint);border-radius:16px;padding:14px;margin:0 0 18px}
+.stypanel>img{width:84px;height:100px;object-fit:contain;flex:0 0 auto}
+.stypanel .spi{display:flex;flex-direction:column;gap:5px;min-width:0}
+.stypanel .spn{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:22px;line-height:1.1}
+.stypanel .sk{display:flex;gap:4px;flex-wrap:wrap}
+.stypanel .sk b{font-weight:600;font-size:10.5px;padding:1px 7px;border-radius:999px;background:#f6e4e7;color:var(--gold)}
+.stypanel .spc{font-size:12px;color:var(--mint);font-weight:600}
+.stypanel .spb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.stypanel .btn{text-decoration:none;padding:7px 11px;font-size:12px}
+.whoami{font-size:12px;color:var(--muted);margin-top:4px}
+.whoami b{color:var(--text);font-weight:600}
+.whoami button{border:0;background:none;padding:0;color:var(--gold);font:inherit;cursor:pointer;text-decoration:underline}
+.who{position:fixed;inset:0;z-index:90;background:rgba(47,42,40,.55);display:none;align-items:center;justify-content:center;padding:20px}
+.who.open{display:flex}
+.whobox{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 20px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px}
+.whobox h3{margin:0;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:500;font-size:24px}
+.whobox .legend{margin:0}
+.whobox input{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 12px;font:16px Inter}
+.whobox input:focus{outline:none;border-color:var(--gold)}
+.top{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:40;width:52px;height:52px;border-radius:50%;border:0;background:var(--gold);color:#fff;box-shadow:0 6px 18px rgba(47,42,40,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 20px/1 Inter;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
+.top span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.top.show{opacity:1;pointer-events:auto}
 /* tablet */
 @media(max-width:900px){:root{--sw:200px}.sty img{height:78px}}
 /* phone */
@@ -158,7 +207,11 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   .sortbar{gap:3px;margin:0}
   .sortbar span{display:none}
   .sortbar select{font-size:11px;padding:4px 1px;height:26px}
-  .sortbar button{flex:0 0 24px;width:24px;height:26px;font-size:13px;padding:0}
+  .sortbar>button{flex:0 0 24px;width:24px;height:26px;font-size:13px;padding:0}
+  .ss-btn{height:26px;padding:4px 6px;font-size:11px}
+  .sortbar.inf span{display:inline}
+  .sortbar.inf{width:100%;gap:6px}
+  .sortbar.inf .ss{flex:1}
   .load i{font-size:9px;padding:0 4px}
   header{padding:14px 12px 4px;gap:10px}
   .logos{gap:8px;margin-bottom:8px}
@@ -223,10 +276,19 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   .actions .btn{padding:7px 6px}
   .card .suits{display:none}
   .sty img{height:52px}
+  /* sticky brand block: header's children join main so the title block alone can stick, the stats scroll away */
+  header{display:contents}
+  header>div:first-child{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 12px 8px;border-bottom:1px solid var(--line)}
+  .stats{padding:10px 12px 0}
+  .stypanel{gap:10px;padding:10px;border-radius:14px}
+  .stypanel>img{width:52px;height:64px}
+  .stypanel .spn{font-size:18px}
+  .stypanel .btn{flex:1;text-align:center;padding:7px 6px}
 }
 </style>
 </head>
 <body>
+<button class="sidetog" id="sideTog" type="button" aria-controls="side"></button>
 <aside class="side" id="side">
   <div class="side-head">
   <h2>Stylists</h2>
@@ -248,9 +310,10 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
     </div>
     <div class="sub">24 September 2026</div>
     <h1>Stylist Allocation</h1>
+    <div class="whoami">Allocating as <b id="whoName"></b> · <button type="button" id="whoChange">Not you?</button></div>
   </div>
   <div class="stats">
-    <div class="stat"><b id="sTotal">0</b><span>Influencers</span></div>
+    <button class="stat all" id="sAll" type="button" title="Show all influencers"><b id="sTotal">0</b><span>Influencers</span></button>
     <div class="stat"><b id="sDone">0</b><span>Allocated</span></div>
     <div class="stat"><b id="sLeft">0</b><span>To go</span></div>
   </div>
@@ -266,7 +329,8 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
       <button class="chip" data-tex="Curly">Curly</button>
       <span id="styChip"></span>
     </div>
-    <input class="search" id="q" type="search" placeholder="Search name or @handle">
+    <div class="sortbar inf"><span>Sort</span><select id="infSort" aria-label="Sort influencers"><option value="no">Number</option><option value="name">Name</option><option value="followers">Followers</option><option value="poll">Stylist poll</option><option value="texture">Hair texture</option></select><button id="infDir" type="button" title="Reverse order" aria-label="Reverse order">↑</button></div>
+    <input class="search" id="q" type="search" placeholder="Search influencer, stylist, hair, specialty…">
     <div class="spacer"></div>
     <div class="actions">
       <button class="btn" id="csv">Download CSV</button>
@@ -277,12 +341,20 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
   <p class="legend">Drag a stylist from the left onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
   <p class="legend" id="suitLegend"></p>
   </details>
+  <div id="styPanel"></div>
   <div id="slots"></div>
 </div>
 </main>
 
 <div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
 <div class="toast" id="toast"></div>
+<button class="top" id="top" type="button" aria-label="Back to top"><span>Top</span>↑</button>
+<div class="who" id="who"><form class="whobox" id="whoForm">
+  <h3>Before you start</h3>
+  <p class="legend">Type your full name so we know who allocated each stylist. This device will remember it.</p>
+  <input id="whoInput" type="text" autocomplete="name" placeholder="Full name, e.g. Maria Santos" required minlength="3" maxlength="60">
+  <button class="btn primary" type="submit">Continue</button>
+</form></div>
 
 <script src="data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -291,6 +363,9 @@ const SLOTS=['6:00 - 7:00PM','7:00 - 8:00PM','8:00 - 9:00PM','TBC'];
 const SLOTLBL={'6:00 - 7:00PM':'6–7 PM','7:00 - 8:00PM':'7–8 PM','8:00 - 9:00PM':'8–9 PM','TBC':'Time TBC'};
 let A={};try{const h=decodeURIComponent(location.hash.slice(1));if(h)h.split(';').forEach(p=>{const[k,v]=p.split('=');if(k&&v)A[k]=v})}catch(e){}
 const save=()=>{try{history.replaceState(null,'','#'+encodeURIComponent(Object.entries(A).map(([k,v])=>k+'='+v).join(';')))}catch(e){}};
+// Who is allocating: asked once, then remembered on this device. BY = who placed each current allocation.
+let WHO='';try{WHO=localStorage.getItem('medicube-who')||''}catch(e){}
+let BY={};
 let state={slot:'all',tex:null,unassigned:false,q:'',sty:null};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -313,12 +388,19 @@ function bestFit(i){
 const fitHTML=i=>{const f=bestFit(i);return f.length?`<div class="fit">Best fit: <b>${f.map(esc).join(' · ')}</b></div>`:''};
 const ROLE_RANK={'Senior Stylist':0,'Stylist':1,'Junior Stylist':2,'Blow-Dry Specialist':3};
 let stySort={by:'name',dir:1};
+let infSort={by:'no',dir:1};
+const fol=i=>{const m=String(i.followers||'').match(/([\d.]+)\s*([km]?)/i);return m?parseFloat(m[1])*({k:1e3,m:1e6}[m[2].toLowerCase()]||1):0};
+const POLL=Object.keys(SUIT_ICON); // stylist poll sort groups by her first poll category, in the legend's order
+function sortInf(list){
+  const key={no:i=>[i.no],name:i=>[i.name.toLowerCase()],followers:i=>[-fol(i),i.no],poll:i=>[Math.min(99,...(i.suits||[]).map(k=>POLL.indexOf(k))),i.no],texture:i=>[i.texture||'~',i.no]}[infSort.by];
+  return [...list].sort((a,b)=>{const x=key(a),y=key(b);for(let k=0;k<x.length;k++){if(x[k]<y[k])return -infSort.dir;if(x[k]>y[k])return infSort.dir}return 0});
+}
 function sortedStylists(){
   const key={name:s=>[s.name],skill:s=>[(s.skills||[]).length?s.skills.join(', '):'~',s.name],role:s=>[ROLE_RANK[s.role||'Stylist']??9,s.name]}[stySort.by];
   return [...STY].sort((a,b)=>{const x=key(a),y=key(b);for(let k=0;k<x.length;k++){if(x[k]<y[k])return -stySort.dir;if(x[k]>y[k])return stySort.dir}return 0});
 }
 function renderStylists(){
-  $('#stylists').innerHTML=sortedStylists().map(s=>{
+  $('#stylists').innerHTML=stylistsShown().map(s=>{
     const c=loadFor(s.name);
     const L=SLOTS.slice(0,3).map((k,ix)=>`<i class="${c[k]>=3?'hot':c[k]?'on':''}" title="${SLOTLBL[k]}">${[6,7,8][ix]}·${c[k]}</i>`).join('')+(c['TBC']?`<i class="on" title="TBC">?·${c['TBC']}</i>`:'');
     return `<div class="sty ${state.sty===s.name?'active':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="" draggable="false"><div class="nm">${esc(s.name)}</div><div class="rl">${esc(s.role||'Stylist')}</div>${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}${(s.suits||[]).length?`<div class="pp" title="Poll picks: ${esc(s.suits.join(', '))}">${Object.keys(SUIT_ICON).filter(k=>s.suits.includes(k)).map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]}</span>`).join('')}</div>`:'<div class="pp none">No poll vote</div>'}<div class="load">${L}</div></div>`}).join('');
@@ -331,11 +413,17 @@ function renderTabs(){
   $('#tabs').innerHTML=t.map(([k,l,n])=>`<button class="tab ${state.slot===k?'on':''}" data-k="${k}">${l}<small>${n}</small></button>`).join('');
   document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{state.slot=b.dataset.k;render()});
 }
+// No-drag option: a dropdown on each empty card, best fits first, with each stylist's count in this slot.
+function pickHTML(i){
+  const fit=bestFit(i),opt=s=>`<option value="${esc(s.name)}">${fit.includes(s.name)?'★ ':''}${esc(s.name)} (${loadFor(s.name)[i.slot]} in slot)</option>`;
+  const rest=[...STY].sort((a,b)=>a.name.localeCompare(b.name)).filter(s=>!fit.includes(s.name));
+  return `<select class="pick" data-pick="${i.no}" aria-label="Choose a stylist for ${esc(i.name)}"><option value="">choose a stylist ▾</option>${fit.length?`<optgroup label="Best fit">${fit.map(n=>opt(styBy(n))).join('')}</optgroup>`:''}<optgroup label="${fit.length?'Other stylists':'All stylists'}">${rest.map(opt).join('')}</optgroup></select>`;
+}
 function card(i){
   const s=A[i.no]?styBy(A[i.no]):null;
   const ph=i.pic?`<img loading="lazy" src="${i.pic}" alt="${esc(i.name)}" draggable="false">`:`<div class="noimg"><b>${initials(i.name)}</b>Photo not public<br>open Instagram</div>`;
-  const dz=s?`<div class="dz set"><img src="${s.pic}" alt="" draggable="false"><b>${esc(s.name)}</b><button class="clr" data-clr="${i.no}" aria-label="Remove ${esc(s.name)}">×</button></div>`
-            :`<div class="dz">Drag a stylist here</div>`;
+  const dz=s?`<div class="dz set"><img src="${s.pic}" alt="" draggable="false"><b>${esc(s.name)}${BY[i.no]?`<small>by ${esc(BY[i.no])}</small>`:''}</b><button class="clr" data-clr="${i.no}" aria-label="Remove ${esc(s.name)}">×</button></div>`
+            :`<div class="dz"><span>Drag a stylist here, or</span>${pickHTML(i)}</div>`;
   return `<div class="card ${s?'done':''}" data-no="${i.no}">
    <div class="ph" data-open="${i.no}">${ph}<span class="no">#${i.no}</span><span class="fl">${esc(i.followers)}</span></div>
    <div class="body"><div class="name">${esc(i.name)}</div>
@@ -345,14 +433,44 @@ function card(i){
    ${dz}</div></div>`;
 }
 function filtered(){
-  const q=state.q.toLowerCase();
-  return INF.filter(i=>(state.slot==='all'||i.slot===state.slot)&&(!state.tex||i.texture===state.tex)&&(!state.unassigned||!A[i.no])&&(!state.sty||A[i.no]===state.sty)&&(!q||i.name.toLowerCase().includes(q)||i.handle.toLowerCase().includes(q)));
+  const styHas=state.sty&&INF.some(i=>A[i.no]===state.sty); // a stylist with nobody yet shows her best-fit influencers instead of an empty page
+  const styOk=i=>!state.sty||(styHas?A[i.no]===state.sty:bestFit(i).includes(state.sty));
+  const q=state.q.trim().toLowerCase(),qs=q?STY.filter(s=>styText(s).includes(q)).map(s=>s.name):[];
+  const hit=i=>infText(i).includes(q)||qs.includes(A[i.no])||bestFit(i).some(n=>qs.includes(n)); // e.g. "keratin" shows influencers matched to a keratin stylist
+  return INF.filter(i=>(state.slot==='all'||i.slot===state.slot)&&(!state.tex||i.texture===state.tex)&&(!state.unassigned||!A[i.no])&&styOk(i)&&(!q||hit(i)));
+}
+// Search covers both sides: an influencer matches on her own details, her poll categories, her allocated / best-fit stylists and who allocated her;
+// a stylist matches on name, position, specialties and poll picks.
+const styText=s=>[s.name,s.role||'Stylist',...(s.skills||[]),...(s.suits||[])].join(' ').toLowerCase();
+const infText=i=>[i.name,'@'+i.handle,i.hair,i.texture,i.colour,...(i.suits||[]),A[i.no],BY[i.no],...bestFit(i)].filter(Boolean).join(' ').toLowerCase();
+function stylistsShown(){
+  const q=state.q.trim().toLowerCase();let all=sortedStylists();
+  if(!q)return all;const m=all.filter(s=>styText(s).includes(q));return m.length?m:all;
+}
+// Staff cards live on the promo site; its links are ?staff=<name>-<role> slugs. Vicki and Virginia have no card there yet.
+const CARD_SLUGS=['ibrahim-senior-stylist','areanne-junior-stylist','mevil-blow-dry-specialist','hazel-mae-blow-dry-specialist','irlyn-junior-stylist','helen-blow-dry-specialist','xyrhy-blow-dry-specialist','clarissa-blow-dry-specialist'];
+const cardURL=s=>{const g=(s.name+'-'+(s.role||'')).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');return CARD_SLUGS.includes(g)?`https://promo.tararosesalon.com/stylist--beautician-cards-page?mode=dark&staff=${g}&view=card`:''};
+function styPanelHTML(s){
+  const mine=INF.filter(i=>A[i.no]===s.name),u=cardURL(s);
+  const c=loadFor(s.name),load=SLOTS.filter(k=>c[k]).map(k=>`${c[k]} in ${SLOTLBL[k]}`).join(' · ');
+  return `<div class="stypanel"><img src="${s.pic}" alt=""><div class="spi"><div class="spn">${esc(s.name)}</div><div class="legend">${esc(s.role||'Stylist')}${s.loc?' · '+esc(s.loc):''}</div>
+    ${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}
+    <div class="legend">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>(SUIT_ICON[k]||'')+' '+esc(k)).join(' · '):'No poll vote'}</div>
+    <div class="spc">${mine.length?`Allocated to ${mine.length}${load?' ('+load+')':''}`:'Not allocated to anyone yet, so these are her best-fit influencers'}</div>
+    <div class="spb">${u?`<a class="btn primary" href="${u}" target="_blank" rel="noopener">View staff card ↗</a>`:'<span class="legend">No staff card online yet</span>'}<button class="btn" id="styAll" type="button">Show all influencers</button></div></div></div>`;
+}
+// Back to the full influencer list: clears the stylist, slot, texture, unallocated and search filters.
+function showAll(){
+  state={...state,slot:'all',tex:null,unassigned:false,q:'',sty:null};$('#q').value='';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));render();scrollTo({top:0,behavior:'smooth'});
 }
 function render(){
   renderStylists();renderTabs();
   $('#styChip').innerHTML=state.sty?`<button class="chip sty-on" id="styClr">${esc(state.sty)} only ×</button>`:'';
   if(state.sty)$('#styClr').onclick=()=>{state.sty=null;render()};
-  const f=filtered();
+  $('#styPanel').innerHTML=state.sty?styPanelHTML(styBy(state.sty)):'';
+  if(state.sty)$('#styAll').onclick=showAll;
+  const f=sortInf(filtered());
   $('#slots').innerHTML=SLOTS.map(s=>{
     const all=INF.filter(i=>i.slot===s);if(!all.length)return'';
     const list=f.filter(i=>i.slot===s);if(!list.length)return'';
@@ -362,6 +480,8 @@ function render(){
   $('#sTotal').textContent=INF.length;$('#sDone').textContent=d;$('#sLeft').textContent=INF.length-d;
   document.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openM(+el.dataset.open));
   document.querySelectorAll('[data-clr]').forEach(el=>el.onclick=()=>setA(el.dataset.clr,''));
+  document.querySelectorAll('[data-pick]').forEach(el=>el.onchange=()=>{if(el.value)assign(el.dataset.pick,el.value)});
+  setURL();
 }
 function setA(no,v){if(v)A[no]=v;else delete A[no];save();refresh(no);push(no,v)}
 function refresh(no){if(drag&&drag.on){drag.stale=true;return}render();if($('#modal').classList.contains('open')&&(no==null||+$('#modal').dataset.no===+no))openM(+$('#modal').dataset.no)}
@@ -375,11 +495,18 @@ function openM(no){
   const btns=STY.map(s=>{const c=loadFor(s.name)[i.slot];return `<button class="${A[no]===s.name?'on':''} ${fit.includes(s.name)?'fitb':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="">${fit.includes(s.name)?'★ ':''}${esc(s.name)}<small>${c} in ${SLOTLBL[i.slot]}</small></button>`}).join('')+(A[no]?`<button class="clear" data-s="">Clear</button>`:'');
   $('#mbox').innerHTML=`<div class="mhead">${i.pic?`<img src="${i.pic}" alt="">`:''}<div><h3>${esc(i.name)}</h3><div class="legend">${SLOTLBL[i.slot]} · ${esc(i.followers)} followers · <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a></div><div class="hair" style="margin-top:8px"><span class="t">${esc(i.texture)}</span>${esc(i.hair||'Check on Instagram')}</div><div style="margin-top:6px">${suitsHTML(i)}</div><div style="margin-top:6px">${fitHTML(i)}</div></div><button class="x" id="mx">×</button></div>
   <div class="legend">Allocate a stylist</div><div class="mstys">${btns}</div>${ig?`<div class="galhd"><div class="legend">Latest ${ig} posts${nv?`, ${nv} of them video. Press play to watch here`:''}</div></div>`:''}<div class="gal ${ig?'ig':''}">${gal}</div>`;
-  $('#modal').dataset.no=no;$('#modal').classList.add('open');
+  $('#modal').dataset.no=no;$('#modal').classList.add('open');setURL();
   $('#mx').onclick=closeM;
   document.querySelectorAll('.mstys button').forEach(b=>b.onclick=()=>assign(no,b.dataset.s));
 }
-function closeM(){$('#modal').classList.remove('open');$('#mbox').innerHTML=''} // clearing stops any video still playing
+function closeM(){$('#modal').classList.remove('open');$('#mbox').innerHTML='';setURL()} // clearing stops any video still playing
+// The address bar follows what's open: ?i=<handle> for an influencer, ?stylist=<name> for a stylist filter, so any view can be shared as a link.
+function setURL(){
+  const p=new URLSearchParams(),m=$('#modal');
+  if(m.classList.contains('open')){const i=INF.find(x=>x.no===+m.dataset.no);if(i)p.set('i',i.handle)}
+  if(state.sty)p.set('stylist',state.sty);
+  const q=p.toString();try{history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash)}catch(e){}
+}
 // Instagram embeds report their real height; size each iframe to fit so nothing is cropped.
 addEventListener('message',e=>{
   if(!/(^|\.)instagram\.com$/.test((()=>{try{return new URL(e.origin).hostname}catch(_){return''}})()))return;
@@ -388,10 +515,32 @@ addEventListener('message',e=>{
   document.querySelectorAll('.gal.ig iframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=Math.ceil(h)+'px'});
 });
 $('#modal').onclick=e=>{if(e.target.id==='modal')closeM()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeSS()}});
+function closeSS(except){document.querySelectorAll('.ss.open').forEach(w=>{if(w!==except)w.classList.remove('open')})}
+document.addEventListener('click',()=>closeSS());
+function softSelect(sel){
+  const w=document.createElement('div');w.className='ss';sel.classList.add('ss-native');sel.after(w);
+  const sync=()=>{w.innerHTML=`<button type="button" class="ss-btn" aria-haspopup="listbox" aria-label="${esc(sel.getAttribute('aria-label')||'')}"><span>${esc(sel.options[sel.selectedIndex].text)}</span><i>▾</i></button><div class="ss-list" role="listbox">${[...sel.options].map(o=>`<button type="button" role="option" data-v="${esc(o.value)}" class="${o.selected?'on':''}">${esc(o.text)}</button>`).join('')}</div>`};
+  sync();
+  w.addEventListener('click',e=>{
+    e.stopPropagation();
+    const o=e.target.closest('[data-v]');
+    if(o){sel.value=o.dataset.v;sel.dispatchEvent(new Event('change'));sync();w.classList.remove('open');return}
+    if(e.target.closest('.ss-btn')){const was=w.classList.contains('open');closeSS();if(!was)w.classList.add('open')}
+  });
+}
+softSelect($('#stySort'));softSelect($('#infSort'));
+// Sidebar hide/expand, remembered on this device
+function setSide(off){document.body.classList.toggle('side-off',off);$('#sideTog').textContent=off?'›':'‹';$('#sideTog').title=off?'Show stylists':'Hide stylists';$('#sideTog').setAttribute('aria-expanded',!off);try{localStorage.setItem('medicube-side-off',off?'1':'')}catch(e){}}
+let sideOff=false;try{sideOff=localStorage.getItem('medicube-side-off')==='1'}catch(e){}
+setSide(sideOff);$('#sideTog').onclick=()=>setSide(!document.body.classList.contains('side-off'));
 document.querySelectorAll('[data-tex]').forEach(b=>b.onclick=()=>{state.tex=state.tex===b.dataset.tex?null:b.dataset.tex;document.querySelectorAll('[data-tex]').forEach(x=>x.classList.toggle('on',x.dataset.tex===state.tex));render()});
 $('[data-f=unassigned]').onclick=e=>{state.unassigned=!state.unassigned;e.target.classList.toggle('on',state.unassigned);render()};
 $('#q').oninput=e=>{state.q=e.target.value;render()};
+$('#sAll').onclick=showAll;
+// Influencer sort, same pattern as the stylist sort; applies inside each time slot.
+$('#infSort').onchange=e=>{infSort.by=e.target.value;infSort.dir=1;$('#infDir').textContent='↑';render()};
+$('#infDir').onclick=()=>{infSort.dir*=-1;$('#infDir').textContent=infSort.dir>0?'↑':'↓';render()};
 let toastT;function toast(t,warn){const el=$('#toast');el.textContent=t;el.classList.toggle('warn',!!warn);el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),warn?2800:1800)}
 // Allocate with a friendly confirmation, and a heads-up when a stylist hits 3+ in one hour.
 function assign(no,name){
@@ -473,32 +622,53 @@ $('#copy').onclick=()=>{
   navigator.clipboard.writeText(t).then(()=>toast('Copied — paste into WhatsApp'),()=>{prompt('Copy this:',t)});
 };
 $('#csv').onclick=()=>{
-  const rows=[['No','Name','Instagram','Followers','Time Slot','Hair','Stylist','Recommended Stylist']].concat(INF.map(i=>[i.no,i.name,i.ig,i.followers,SLOTLBL[i.slot],i.hair||'',A[i.no]||'',bestFit(i).join(' · ')]));
+  const rows=[['No','Name','Instagram','Followers','Time Slot','Hair','Stylist','Recommended Stylist','Allocated By']].concat(INF.map(i=>[i.no,i.name,i.ig,i.followers,SLOTLBL[i.slot],i.hair||'',A[i.no]||'',bestFit(i).join(' · '),A[i.no]?BY[i.no]||'':'']));
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='medicube-attria-stylist-allocation.csv';a.click();
 };
+const URLP=new URLSearchParams(location.search); // read before render(), which rewrites the address bar
+if(URLP.get('stylist')&&styBy(URLP.get('stylist')))state.sty=URLP.get('stylist');
 render();
+{const h=(URLP.get('i')||'').toLowerCase();const i=h&&INF.find(x=>x.handle.toLowerCase()===h);if(i)openM(i.no)}
+
+// Name gate: shown until this device has a name saved.
+function askWho(){$('#whoInput').value=WHO;$('#who').classList.add('open');setTimeout(()=>$('#whoInput').focus(),50)}
+function showWho(){$('#whoName').textContent=WHO}
+$('#whoForm').onsubmit=e=>{
+  e.preventDefault();
+  const n=$('#whoInput').value.trim().replace(/\s+/g,' ');if(n.length<3)return;
+  WHO=n;try{localStorage.setItem('medicube-who',WHO)}catch(_){}
+  showWho();$('#who').classList.remove('open');
+};
+$('#whoChange').onclick=askWho;
+showWho();if(!WHO)askWho();
+
+// Back to top
+$('#top').onclick=()=>scrollTo({top:0,behavior:'smooth'});
+addEventListener('scroll',()=>$('#top').classList.toggle('show',scrollY>600),{passive:true});
 
 // Shared allocations: Supabase (dashboard project, event_allocations table). The URL hash stays as an offline fallback.
 const EVENT='medicube-attria';
 const sb=window.supabase?supabase.createClient('https://gvijxenafoowajqktqvd.supabase.co','sb_publishable_e5o0vPayb-6552oARTeu7Q_KoqfT7xO'):null;
 async function push(no,v){
   if(!sb)return;
-  const q=v?sb.from('event_allocations').upsert({event:EVENT,influencer_no:+no,stylist:v,updated_at:new Date().toISOString()})
+  if(v)BY[no]=WHO;else delete BY[no];
+  const q=v?sb.from('event_allocations').upsert({event:EVENT,influencer_no:+no,stylist:v,allocated_by:WHO,updated_at:new Date().toISOString()})
            :sb.from('event_allocations').delete().eq('event',EVENT).eq('influencer_no',+no);
-  const{error}=await q;if(error)alert('Not saved to the shared list, check your connection: '+error.message);
+  const{error}=await q;if(error)return alert('Not saved to the shared list, check your connection: '+error.message);
+  sb.from('event_allocation_log').insert({event:EVENT,influencer_no:+no,stylist:v||null,action:v?'set':'clear',by_name:WHO}).then(()=>{}); // history of who put who, including removals
 }
 async function pull(){
   if(!sb)return;
-  const{data,error}=await sb.from('event_allocations').select('influencer_no,stylist').eq('event',EVENT);
+  const{data,error}=await sb.from('event_allocations').select('influencer_no,stylist,allocated_by').eq('event',EVENT);
   if(error)return;
-  A={};data.forEach(r=>A[r.influencer_no]=r.stylist);save();refresh();
+  A={};BY={};data.forEach(r=>{A[r.influencer_no]=r.stylist;if(r.allocated_by)BY[r.influencer_no]=r.allocated_by});save();refresh();
 }
 if(sb){
   pull();
   sb.channel('alloc').on('postgres_changes',{event:'*',schema:'public',table:'event_allocations',filter:'event=eq.'+EVENT},p=>{
     const r=p.new&&p.new.influencer_no?p.new:p.old;
-    if(p.eventType==='DELETE')delete A[r.influencer_no];else A[r.influencer_no]=r.stylist;
+    if(p.eventType==='DELETE'){delete A[r.influencer_no];delete BY[r.influencer_no]}else{A[r.influencer_no]=r.stylist;if(r.allocated_by)BY[r.influencer_no]=r.allocated_by;else delete BY[r.influencer_no]}
     save();refresh(r.influencer_no);
   }).subscribe();
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
