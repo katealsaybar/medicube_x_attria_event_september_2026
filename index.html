@@ -455,7 +455,7 @@ $('#copy').onclick=()=>{
   navigator.clipboard.writeText(t).then(()=>toast('Copied — paste into WhatsApp'),()=>{prompt('Copy this:',t)});
 };
 $('#csv').onclick=()=>{
-  const rows=[['No','Name','Instagram','Followers','Time Slot','Hair','Stylist']].concat(INF.map(i=>[i.no,i.name,i.ig,i.followers,SLOTLBL[i.slot],i.hair||'',A[i.no]||'']));
+  const rows=[['No','Name','Instagram','Followers','Time Slot','Hair','Stylist','Recommended Stylist']].concat(INF.map(i=>[i.no,i.name,i.ig,i.followers,SLOTLBL[i.slot],i.hair||'',A[i.no]||'',bestFit(i).join(' · ')]));
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='medicube-attria-stylist-allocation.csv';a.click();
 };
