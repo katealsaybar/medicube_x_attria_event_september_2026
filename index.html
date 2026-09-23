@@ -90,8 +90,8 @@ header .sub{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transfor
 .tab{flex:0 0 auto;padding:7px 12px;border-radius:8px;cursor:pointer;color:var(--muted);border:0;background:none;font:500 13px Inter}
 .tab.on{background:var(--gold);color:#fff}.tab.on small{color:#fbe9ec}
 .tab small{color:var(--muted);margin-left:4px}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;font:500 12px Inter}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;font:500 12px Inter;white-space:nowrap}
 .chip.on{border-color:var(--gold);color:var(--gold)}
 .chip.sty-on{border-color:var(--mint);color:var(--mint)}
 input.search{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font:14px Inter;min-width:320px}
@@ -176,7 +176,8 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .stypanel .sk b{font-weight:600;font-size:10.5px;padding:1px 7px;border-radius:999px;background:#f6e4e7;color:var(--gold)}
 .stypanel .spc{font-size:12px;color:var(--mint);font-weight:600}
 .stypanel .spb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
-.stypanel .btn{text-decoration:none;padding:7px 11px;font-size:12px}
+.stypanel .btn{text-decoration:none;padding:7px 11px;font-size:12px;white-space:nowrap}
+.stypanel .pl-short{display:none}
 .whoami{font-size:12px;color:var(--muted);margin-top:4px}
 .whoami b{color:var(--text);font-weight:600}
 .whoami button{border:0;background:none;padding:0;color:var(--gold);font:inherit;cursor:pointer;text-decoration:underline}
@@ -325,6 +326,9 @@ body.scrolled header>div:first-child{padding-right:96px}
   .stypanel>img{width:52px;height:64px}
   .stypanel .spn{font-size:18px}
   .stypanel .btn{flex:1;text-align:center;padding:7px 6px}
+  .stypanel .pl-long{display:none}
+  .stypanel .pl-short{display:block;font-size:13px;letter-spacing:.05em}
+  .stypanel .spc{font-size:11.5px}
 }
 </style>
 </head>
@@ -497,9 +501,10 @@ function styPanelHTML(s){
   const c=loadFor(s.name),load=SLOTS.filter(k=>c[k]).map(k=>`${c[k]} in ${SLOTLBL[k]}`).join(' · ');
   return `<div class="stypanel"><img src="${s.pic}" alt=""><div class="spi"><div class="spn">${esc(s.name)}</div><div class="legend">${esc(s.role||'Stylist')}${s.loc?' · '+esc(s.loc):''}</div>
     ${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}
-    <div class="legend">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>(SUIT_ICON[k]||'')+' '+esc(k)).join(' · '):'No poll vote'}</div>
-    <div class="spc">${mine.length?`Allocated to ${mine.length}${load?' ('+load+')':''}`:'Not allocated to anyone yet, so these are her best-fit influencers'}</div>
-    <div class="spb">${u?`<a class="btn primary" href="${u}" target="_blank" rel="noopener">View staff card ↗</a>`:'<span class="legend">No staff card online yet</span>'}<button class="btn" id="styAll" type="button">Show all influencers</button></div></div></div>`;
+    <div class="legend pl-long">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>(SUIT_ICON[k]||'')+' '+esc(k)).join(' · '):'No poll vote'}</div>
+    <div class="legend pl-short">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]||''}</span>`).join(' '):'No poll vote'}</div>
+    <div class="spc">${mine.length?`Allocated to ${mine.length}${load?' ('+load+')':''}`:'Not allocated yet · her best-fit influencers are below'}</div>
+    <div class="spb">${u?`<a class="btn primary" href="${u}" target="_blank" rel="noopener">Staff card ↗</a>`:'<span class="legend">No staff card online yet</span>'}<button class="btn" id="styAll" type="button">Show all</button></div></div></div>`;
 }
 // Back to the full influencer list: clears the stylist, slot, texture, unallocated and search filters.
 function showAll(){
