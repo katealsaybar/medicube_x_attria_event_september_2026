@@ -26,6 +26,9 @@ img{-webkit-user-drag:none}
 .sty .nm{font-weight:600;font-size:13px;margin-top:5px;line-height:1.2}
 .sty .rl{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .suits{display:flex;flex-wrap:wrap;gap:4px}
+.vibe{font-size:12px;color:var(--text)}.vibe b{font-weight:600;color:var(--gold)}
+.sty .pers{font-size:9.5px;color:var(--muted,#8a7f80);margin-top:3px;line-height:1.25}
+.stypanel .pinfo{font-size:12px;line-height:1.4}.stypanel .pinfo b{font-weight:600;color:var(--gold)}
 .suits b{font-weight:500;font-size:11px;padding:2px 7px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);white-space:nowrap}
 .sty .pp{display:flex;gap:1px;justify-content:center;flex-wrap:wrap;margin-top:4px;font-size:12px;line-height:1.2}
 .sty .pp.none{font-size:9.5px;color:var(--muted)}
@@ -425,6 +428,7 @@ function loadFor(name){const c={};SLOTS.forEach(s=>c[s]=0);INF.forEach(i=>{if(A[
 const SUIT_ICON={'Bouncy Blowdry':'🤎','Frizzy strong hair to polished':'💙','Beach waves':'💜','Straight and sleek':'💛','Short bob hair':'💚','Arabic hair':'🧡','European hair':'❤️'};
 document.getElementById('suitLegend').innerHTML='Stylist poll: '+Object.entries(SUIT_ICON).map(([k,v])=>`${v} ${esc(k)}`).join(' · ');
 if(matchMedia('(max-width:1180px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
+const vibeHTML=i=>i.vibe?`<div class="vibe"><b>✨ Vibe:</b> ${esc(i.vibe)}</div>`:'';
 const suitsHTML=i=>(i.suits||[]).length?`<div class="suits" title="Matches the stylist poll">${i.suits.map(k=>`<b>${SUIT_ICON[k]||''} ${esc(k)}</b>`).join('')}</div>`:'';
 // Best fit = stylists whose poll picks (STY[].suits) cover the most of her hair categories; ties go to whoever is lighter in her slot, then the more specialised stylist.
 function bestFit(i){
@@ -451,7 +455,7 @@ function renderStylists(){
   $('#stylists').innerHTML=stylistsShown().map(s=>{
     const c=loadFor(s.name);
     const L=SLOTS.slice(0,3).map((k,ix)=>`<i class="${c[k]>=3?'hot':c[k]?'on':''}" title="${SLOTLBL[k]}">${[6,7,8][ix]}·${c[k]}</i>`).join('')+(c['TBC']?`<i class="on" title="TBC">?·${c['TBC']}</i>`:'');
-    return `<div class="sty ${state.sty===s.name?'active':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="" draggable="false"><div class="nm">${esc(s.name)}</div><div class="rl">${esc(s.role||'Stylist')}</div>${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}${(s.suits||[]).length?`<div class="pp" title="Poll picks: ${esc(s.suits.join(', '))}">${Object.keys(SUIT_ICON).filter(k=>s.suits.includes(k)).map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]}</span>`).join('')}</div>`:'<div class="pp none">No poll vote</div>'}<div class="load">${L}</div></div>`}).join('');
+    return `<div class="sty ${state.sty===s.name?'active':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="" draggable="false"><div class="nm">${esc(s.name)}</div><div class="rl">${esc(s.role||'Stylist')}</div>${(s.pers||[]).length?`<div class="pers">${s.pers.map(esc).join(' · ')}</div>`:''}${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}${(s.suits||[]).length?`<div class="pp" title="Poll picks: ${esc(s.suits.join(', '))}">${Object.keys(SUIT_ICON).filter(k=>s.suits.includes(k)).map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]}</span>`).join('')}</div>`:'<div class="pp none">No poll vote</div>'}<div class="load">${L}</div></div>`}).join('');
 }
 $('#stySort').onchange=e=>{stySort.by=e.target.value;stySort.dir=1;$('#styDir').textContent='↑';renderStylists()};
 $('#styDir').onclick=()=>{stySort.dir*=-1;$('#styDir').textContent=stySort.dir>0?'↑':'↓';renderStylists()};
@@ -476,7 +480,7 @@ function card(i){
    <div class="ph" data-open="${i.no}">${ph}<span class="no">#${i.no}</span><span class="fl">${esc(i.followers)}</span></div>
    <div class="body"><div class="name">${esc(i.name)}</div>
    <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a>
-   <div class="hair"><span class="t">${i.texture==='?'?'Hair — check IG':esc(i.texture)}</span>${esc(i.hair||'Profile photos not viewable, check on Instagram')}</div>${suitsHTML(i)}${fitHTML(i)}
+   <div class="hair"><span class="t">${i.texture==='?'?'Hair — check IG':esc(i.texture)}</span>${esc(i.hair||'Profile photos not viewable, check on Instagram')}</div>${vibeHTML(i)}${suitsHTML(i)}${fitHTML(i)}
    ${i.notes?`<div class="note">Note: ${esc(i.notes)}</div>`:''}
    ${dz}</div></div>`;
 }
@@ -488,9 +492,9 @@ function filtered(){
   return INF.filter(i=>(state.slot==='all'||i.slot===state.slot)&&(!state.tex||i.texture===state.tex)&&(!state.unassigned||!A[i.no])&&styOk(i)&&(!q||hit(i)));
 }
 // Search covers both sides: an influencer matches on her own details, her poll categories, her allocated / best-fit stylists and who allocated her;
-// a stylist matches on name, position, specialties and poll picks.
-const styText=s=>[s.name,s.role||'Stylist',...(s.skills||[]),...(s.suits||[])].join(' ').toLowerCase();
-const infText=i=>[i.name,'@'+i.handle,i.hair,i.texture,i.colour,...(i.suits||[]),A[i.no],BY[i.no],...bestFit(i)].filter(Boolean).join(' ').toLowerCase();
+// a stylist matches on name, position, specialties, poll picks and her staff-card personality / best-for / specialises-in.
+const styText=s=>[s.name,s.role||'Stylist',...(s.skills||[]),...(s.suits||[]),...(s.pers||[]),s.best,...(s.spec||[])].filter(Boolean).join(' ').toLowerCase();
+const infText=i=>[i.name,'@'+i.handle,i.hair,i.texture,i.colour,i.vibe,...(i.suits||[]),A[i.no],BY[i.no],...bestFit(i)].filter(Boolean).join(' ').toLowerCase();
 function stylistsShown(){
   const q=state.q.trim().toLowerCase();let all=sortedStylists();
   if(!q)return all;const m=all.filter(s=>styText(s).includes(q));return m.length?m:all;
@@ -503,6 +507,7 @@ function styPanelHTML(s){
   const c=loadFor(s.name),load=SLOTS.filter(k=>c[k]).map(k=>`${c[k]} in ${SLOTLBL[k]}`).join(' · ');
   return `<div class="stypanel"><img src="${s.pic}" alt=""><div class="spi"><div class="spn">${esc(s.name)}</div><div class="legend">${esc(s.role||'Stylist')}${s.loc?' · '+esc(s.loc):''}</div>
     ${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}
+    ${(s.pers||[]).length?`<div class="pinfo"><b>Personality:</b> ${s.pers.map(esc).join(' · ')}</div><div class="pinfo"><b>Best for:</b> ${esc(s.best)}</div><div class="pinfo"><b>Specialises in:</b> ${s.spec.map(esc).join(' · ')}</div>`:'<div class="pinfo legend">No staff card yet, so no personality on file</div>'}
     <div class="legend pl-long">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>(SUIT_ICON[k]||'')+' '+esc(k)).join(' · '):'No poll vote'}</div>
     <div class="legend pl-short">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]||''}</span>`).join(' '):'No poll vote'}</div>
     <div class="spc">${mine.length?`Allocated to ${mine.length}${load?' ('+load+')':''}`:'Not allocated yet · her best-fit influencers are below'}</div>
@@ -542,7 +547,7 @@ function openM(no){
   const nv=ig?i.ig_posts.filter(p=>p.t==='v').length:0;
   const fit=bestFit(i);
   const btns=STY.map(s=>{const c=loadFor(s.name)[i.slot];return `<button class="${A[no]===s.name?'on':''} ${fit.includes(s.name)?'fitb':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="">${fit.includes(s.name)?'★ ':''}${esc(s.name)}<small>${c} in ${SLOTLBL[i.slot]}</small></button>`}).join('')+(A[no]?`<button class="clear" data-s="">Clear</button>`:'');
-  $('#mbox').innerHTML=`<div class="mhead">${i.pic?`<img src="${i.pic}" alt="">`:''}<div><h3>${esc(i.name)}</h3><div class="legend">${SLOTLBL[i.slot]} · ${esc(i.followers)} followers · <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a></div><div class="hair" style="margin-top:8px"><span class="t">${esc(i.texture)}</span>${esc(i.hair||'Check on Instagram')}</div><div style="margin-top:6px">${suitsHTML(i)}</div><div style="margin-top:6px">${fitHTML(i)}</div></div><button class="x" id="mx">×</button></div>
+  $('#mbox').innerHTML=`<div class="mhead">${i.pic?`<img src="${i.pic}" alt="">`:''}<div><h3>${esc(i.name)}</h3><div class="legend">${SLOTLBL[i.slot]} · ${esc(i.followers)} followers · <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a></div><div class="hair" style="margin-top:8px"><span class="t">${esc(i.texture)}</span>${esc(i.hair||'Check on Instagram')}</div><div style="margin-top:6px">${vibeHTML(i)}</div><div style="margin-top:6px">${suitsHTML(i)}</div><div style="margin-top:6px">${fitHTML(i)}</div></div><button class="x" id="mx">×</button></div>
   <div class="legend">Allocate a stylist</div><div class="mstys">${btns}</div>${ig?`<div class="galhd"><div class="legend">Latest ${ig} posts${nv?`, ${nv} of them video. Press play to watch here`:''}</div></div>`:''}<div class="gal ${ig?'ig':''}">${gal}</div>`;
   $('#modal').dataset.no=no;$('#modal').classList.add('open');setURL();
   $('#mx').onclick=closeM;
