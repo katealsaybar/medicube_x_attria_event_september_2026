@@ -442,7 +442,7 @@ document.getElementById('suitLegend').innerHTML='Stylist poll: '+Object.entries(
 if(matchMedia('(max-width:1180px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
 const vibeHTML=i=>i.vibe?`<div class="vibe"><b>✨ Vibe:</b> ${esc(i.vibe)}</div>`:'';
 // Why this match, in plain words: her vibe sits just above, so this line names the stylist's personality and what she's best for (from her staff card).
-// Vicki and Virginia have no card, so theirs falls back to the hair poll picks they share with her.
+// Vicki and Virginija have no card, so theirs falls back to the hair poll picks they share with her.
 const whyHTML=(i,s)=>{if(!s)return'';if((s.pers||[]).length)return`<div class="why"><b>Why ${esc(s.name)}?</b> ${s.pers.map(esc).join(' · ')}. Best for ${esc(s.best.charAt(0).toLowerCase()+s.best.slice(1))}.</div>`;
   if(s.best)return`<div class="why"><b>Why ${esc(s.name)}?</b> Best for ${esc(s.best.charAt(0).toLowerCase()+s.best.slice(1))}. <small>(No staff card yet: from her Phorest bookings.)</small></div>`;
   const m=(i.suits||[]).filter(k=>(s.suits||[]).includes(k));return`<div class="why"><b>Why ${esc(s.name)}?</b> ${m.length?'Her poll picks match: '+m.map(esc).join(', ').toLowerCase()+'.':'Picked by hand.'} No staff card yet.</div>`};
@@ -516,7 +516,7 @@ function stylistsShown(){
   const q=state.q.trim().toLowerCase();let all=sortedStylists();
   if(!q)return all;const m=all.filter(s=>styText(s).includes(q));return m.length?m:all;
 }
-// Staff cards live on the promo site; its links are ?staff=<name>-<role> slugs. Vicki and Virginia have no card there yet.
+// Staff cards live on the promo site; its links are ?staff=<name>-<role> slugs. Vicki and Virginija have no card there yet.
 const CARD_SLUGS=['ibrahim-senior-stylist','areanne-junior-stylist','mevil-blow-dry-specialist','hazel-mae-blow-dry-specialist','irlyn-junior-stylist','helen-blow-dry-specialist','xyrhy-blow-dry-specialist','clarissa-blow-dry-specialist'];
 const cardURL=s=>{const g=(s.name+'-'+(s.role||'')).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');return CARD_SLUGS.includes(g)?`https://promo.tararosesalon.com/stylist--beautician-cards-page?mode=dark&staff=${g}&view=card`:''};
 function styPanelHTML(s){
