@@ -441,8 +441,9 @@ body.scrolled header>div:first-child{padding-right:96px}
 <script>
 const SLOTS=['6:00 - 7:00PM','7:00 - 8:00PM','8:00 - 9:00PM','TBC'];
 const SLOTLBL={'6:00 - 7:00PM':'6–7 PM','7:00 - 8:00PM':'7–8 PM','8:00 - 9:00PM':'8–9 PM','TBC':'Time TBC'};
-let A={};try{const h=decodeURIComponent(location.hash.slice(1));if(h)h.split(';').forEach(p=>{const[k,v]=p.split('=');if(k&&v)A[k]=v})}catch(e){}
-const save=()=>{try{history.replaceState(null,'','#'+encodeURIComponent(Object.entries(A).map(([k,v])=>k+'='+v).join(';')))}catch(e){}};
+// Allocations live in Supabase. The #1=Mevil;2=... hash is only an offline fallback: with Supabase loaded it is neither read nor written, and an old one is wiped so shared links stay short.
+let A={};if(window.supabase){try{if(location.hash)history.replaceState(null,'',location.pathname+location.search)}catch(e){}}else try{const h=decodeURIComponent(location.hash.slice(1));if(h)h.split(';').forEach(p=>{const[k,v]=p.split('=');if(k&&v)A[k]=v})}catch(e){}
+const save=()=>{if(window.supabase)return;try{history.replaceState(null,'','#'+encodeURIComponent(Object.entries(A).map(([k,v])=>k+'='+v).join(';')))}catch(e){}};
 // Who is allocating: asked once, then remembered on this device. BY = who placed each current allocation.
 let WHO='';try{WHO=localStorage.getItem('medicube-who')||''}catch(e){}
 let BY={};
