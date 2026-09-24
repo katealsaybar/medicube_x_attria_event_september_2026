@@ -154,6 +154,22 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .mstys button{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:6px 4px;cursor:pointer;font:500 12px Inter}
 .mstys button img{width:100%;height:58px;object-fit:contain}
 .fit{font-size:11px;color:var(--muted);line-height:1.35}
+/* Who sits with whom: one row per stylist, one column per hour, live from the allocations */
+.seat{margin:0 0 12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.seat>summary{font-weight:600;font-size:13px;cursor:pointer;color:var(--text);padding:2px 0}.seat>summary small{font-weight:400;color:var(--muted);margin-left:6px}
+.seatwrap{overflow-x:auto;margin-top:8px;-webkit-overflow-scrolling:touch}
+.seattbl{border-collapse:collapse;width:100%;font-size:12.5px;min-width:560px}
+.seattbl th,.seattbl td{border-top:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.seattbl thead th{border-top:0;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;white-space:nowrap}
+.seattbl td.n{font-weight:600;text-align:center;font-variant-numeric:tabular-nums}.seattbl thead th.n{text-align:center}
+.seattbl tbody th{position:sticky;left:0;background:var(--panel);white-space:nowrap;z-index:1}
+.seattbl tbody tr:nth-child(even) td,.seattbl tbody tr:nth-child(even) th{background:var(--panel2)}
+.seatsty{display:flex;align-items:center;gap:6px;border:0;background:none;font:600 12.5px Inter;color:var(--text);cursor:pointer;padding:0}
+.seatsty img{width:24px;height:28px;object-fit:contain}
+.seati{display:block;border:0;background:none;padding:1px 0;font:inherit;color:var(--text);cursor:pointer;text-align:left}
+.seati:hover{color:var(--gold);text-decoration:underline}
+.seattbl .none{color:var(--muted)}.seathint{display:none;margin:6px 0 0}
+@media (max-width:640px){.seattbl{font-size:12px;min-width:0}.seattbl th,.seattbl td{padding:5px 7px}.seati{white-space:nowrap}.seatsty img{display:none}.seathint{display:block}.seattbl td.n,.seattbl thead th.n{padding:5px 4px}}
 /* Review-first card: the match and why sit at the top; hair detail folds away once she's matched */
 .card .body>.dz{margin-top:2px}
 .why small{color:var(--muted);font-size:10.5px}.why{font-size:12px;line-height:1.4;color:var(--text);background:#f1f8f6;border-radius:8px;padding:6px 8px}.why b{font-weight:600;color:var(--mint)}
@@ -400,6 +416,7 @@ body.scrolled header>div:first-child{padding-right:96px}
     </div>
   </div>
   <ol class="steps" id="steps"><li><b>Check her match</b><span>Each card shows her stylist and why they fit: her vibe, the stylist's personality.</span></li><li><b>Happy? Leave it, it's saved</b><span>Nothing to press. The whole team already sees it.</span></li><li><b>Change? Tap ×, pick another</b><span>The × is next to the stylist's name on the card.</span></li></ol>
+  <details class="seat" id="seat" open><summary>Who sits with whom<small id="seatSum"></small></summary><div class="seatwrap" id="seatBody"></div></details>
   <details class="howto" id="howto"><summary>More tips · dragging, photos, poll colours</summary>
   <p class="legend">Pick from "choose a stylist" on any card, or open the stylist list with the › tab on the left and drag a stylist onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
   <p class="legend" id="suitLegend"></p>
@@ -535,8 +552,18 @@ function showAll(){
   state={...state,slot:'all',tex:null,unassigned:false,q:'',sty:null};$('#q').value='';
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));render();scrollTo({top:0,behavior:'smooth'});
 }
+// The seating table: stylists A-Z, how many she has, and who sits with her in each hour. Tap a stylist for her panel, a name for the influencer.
+function renderSeat(){
+  const slots=SLOTS.filter(s=>INF.some(i=>i.slot===s)),n=STY.map(st=>INF.filter(i=>A[i.no]===st.name).length);
+  const rows=[...STY].sort((a,b)=>a.name.localeCompare(b.name)).map(st=>{const mine=INF.filter(i=>A[i.no]===st.name);
+    return `<tr><th scope="row"><button type="button" class="seatsty" data-seatsty="${esc(st.name)}"><img src="${st.pic}" alt="">${esc(st.name)}</button></th><td class="n">${mine.length}</td>${slots.map(s=>{const l=mine.filter(i=>i.slot===s);return`<td>${l.length?l.map(i=>`<button type="button" class="seati" data-open="${i.no}">${esc(i.name)}</button>`).join(''):'<span class="none">·</span>'}</td>`}).join('')}</tr>`}).join('');
+  const open=INF.filter(i=>!A[i.no]);
+  $('#seatBody').innerHTML=`<table class="seattbl"><thead><tr><th>Stylist</th><th class="n">Total</th>${slots.map(s=>`<th>${SLOTLBL[s]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table><p class="legend seathint">Swipe the table sideways for the later hours →</p>${open.length?`<p class="legend">No stylist yet: ${open.map(i=>esc(i.name)).join(', ')}</p>`:''}`;
+  $('#seatSum').textContent=`${Math.min(...n)}–${Math.max(...n)} each`;
+  document.querySelectorAll('[data-seatsty]').forEach(el=>el.onclick=()=>{state.sty=el.dataset.seatsty;render();scrollTo({top:0,behavior:'smooth'})});
+}
 function render(){
-  renderStylists();renderTabs();
+  renderStylists();renderTabs();renderSeat();
   $('#styChip').innerHTML=state.sty?`<button class="chip sty-on" id="styClr">${esc(state.sty)} only ×</button>`:'';
   if(state.sty)$('#styClr').onclick=()=>{state.sty=null;render()};
   $('#styPanel').innerHTML=state.sty?styPanelHTML(styBy(state.sty)):'';
