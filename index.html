@@ -154,6 +154,17 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .mstys button{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:6px 4px;cursor:pointer;font:500 12px Inter}
 .mstys button img{width:100%;height:58px;object-fit:contain}
 .fit{font-size:11px;color:var(--muted);line-height:1.35}
+/* Review-first card: the match and why sit at the top; hair detail folds away once she's matched */
+.card .body>.dz{margin-top:2px}
+.why small{color:var(--muted);font-size:10.5px}.why{font-size:12px;line-height:1.4;color:var(--text);background:#f1f8f6;border-radius:8px;padding:6px 8px}.why b{font-weight:600;color:var(--mint)}
+.more{margin-top:auto}.more>summary{font-size:11.5px;font-weight:500;color:var(--gold);cursor:pointer;list-style:none;padding:2px 0}.more>summary::-webkit-details-marker{display:none}.more>summary::before{content:'+ '}.more[open]>summary::before{content:'− '}
+.more>div{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:0;list-style:none;counter-reset:st}
+.steps li{flex:1 1 200px;counter-increment:st;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px 10px 44px;position:relative;font-size:13px;line-height:1.35;color:var(--text)}
+.steps li::before{content:counter(st);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;font:600 12px/22px Inter;text-align:center}
+.steps li b{display:block;font-weight:600}
+/* Phone: the three steps become one compact card, stats sit on one slim line, and the 'by ...' line under a stylist wraps instead of cutting off */
+@media (max-width:640px){.steps{gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 0;margin-bottom:10px}.steps li{flex-basis:100%;border:0;border-radius:0;background:none;padding:5px 10px 5px 38px;font-size:13px}.steps li+li{border-top:1px solid var(--line)}.steps li::before{top:5px;left:10px;width:20px;height:20px;line-height:20px;font-size:11px}.steps li span{display:none}.stat{display:flex;align-items:baseline;justify-content:center;gap:5px;padding:5px 4px}.stat b{display:inline;font-size:16px}.dz.set b small{white-space:normal;line-height:1.2}.why{font-size:12.5px;padding:6px 8px}}
 .fit b{color:var(--mint);font-weight:600}
 .fit a.fitl{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
 .fit a.fitl:hover{color:var(--gold)}
@@ -166,7 +177,7 @@ body.dragging,body.dragging *{cursor:grabbing!important;user-select:none!importa
 .toast.warn{background:var(--warn)}
 .toast.show{opacity:1}
 .legend{font-size:12px;color:var(--muted)}
-.howto>summary{display:none}
+.howto>summary{display:block;font-size:12px;font-weight:500;color:var(--gold);cursor:pointer;margin:0 0 10px} /* tips start folded everywhere: the three steps above are all anyone needs first */
 .dz.set b small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
 .dz:not(.set){flex-wrap:wrap;gap:4px 6px;padding:6px}
 .dz select.pick{max-width:100%;background:var(--panel2);color:var(--gold);border:1px solid var(--line);border-radius:8px;padding:5px 6px;font:500 12px Inter;cursor:pointer}
@@ -388,7 +399,8 @@ body.scrolled header>div:first-child{padding-right:96px}
       <button class="btn primary" id="copy">Copy for WhatsApp</button>
     </div>
   </div>
-  <details class="howto" id="howto" open><summary>How it works · stylist poll key</summary>
+  <ol class="steps" id="steps"><li><b>Check her match</b><span>Each card shows her stylist and why they fit: her vibe, the stylist's personality.</span></li><li><b>Happy? Leave it, it's saved</b><span>Nothing to press. The whole team already sees it.</span></li><li><b>Change? Tap ×, pick another</b><span>The × is next to the stylist's name on the card.</span></li></ol>
+  <details class="howto" id="howto"><summary>More tips · dragging, photos, poll colours</summary>
   <p class="legend">Pick from "choose a stylist" on any card, or open the stylist list with the › tab on the left and drag a stylist onto an influencer. On a phone, swipe the stylist to the right, or press and hold, then drag. <span class="long">Tap a photo for her latest posts and reels. Hair notes come from her latest Instagram photos, so double-check before the day. Sidebar counts are per slot (6 · 7 · 8 PM); orange means 3 or more in one hour.</span></p>
   <p class="legend" id="suitLegend"></p>
   </details>
@@ -429,6 +441,11 @@ const SUIT_ICON={'Bouncy Blowdry':'🤎','Frizzy strong hair to polished':'💙'
 document.getElementById('suitLegend').innerHTML='Stylist poll: '+Object.entries(SUIT_ICON).map(([k,v])=>`${v} ${esc(k)}`).join(' · ');
 if(matchMedia('(max-width:1180px)').matches)$('#howto').open=false; // phone: instructions start folded so the cards come first
 const vibeHTML=i=>i.vibe?`<div class="vibe"><b>✨ Vibe:</b> ${esc(i.vibe)}</div>`:'';
+// Why this match, in plain words: her vibe sits just above, so this line names the stylist's personality and what she's best for (from her staff card).
+// Vicki and Virginia have no card, so theirs falls back to the hair poll picks they share with her.
+const whyHTML=(i,s)=>{if(!s)return'';if((s.pers||[]).length)return`<div class="why"><b>Why ${esc(s.name)}?</b> ${s.pers.map(esc).join(' · ')}. Best for ${esc(s.best.charAt(0).toLowerCase()+s.best.slice(1))}.</div>`;
+  if(s.best)return`<div class="why"><b>Why ${esc(s.name)}?</b> Best for ${esc(s.best.charAt(0).toLowerCase()+s.best.slice(1))}. <small>(No staff card yet: from her Phorest bookings.)</small></div>`;
+  const m=(i.suits||[]).filter(k=>(s.suits||[]).includes(k));return`<div class="why"><b>Why ${esc(s.name)}?</b> ${m.length?'Her poll picks match: '+m.map(esc).join(', ').toLowerCase()+'.':'Picked by hand.'} No staff card yet.</div>`};
 const suitsHTML=i=>(i.suits||[]).length?`<div class="suits" title="Matches the stylist poll">${i.suits.map(k=>`<b>${SUIT_ICON[k]||''} ${esc(k)}</b>`).join('')}</div>`:'';
 // Best fit = stylists whose poll picks (STY[].suits) cover the most of her hair categories; ties go to whoever is lighter in her slot, then the more specialised stylist.
 function bestFit(i){
@@ -480,9 +497,9 @@ function card(i){
    <div class="ph" data-open="${i.no}">${ph}<span class="no">#${i.no}</span><span class="fl">${esc(i.followers)}</span></div>
    <div class="body"><div class="name">${esc(i.name)}</div>
    <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a>
-   <div class="hair"><span class="t">${i.texture==='?'?'Hair — check IG':esc(i.texture)}</span>${esc(i.hair||'Profile photos not viewable, check on Instagram')}</div>${vibeHTML(i)}${suitsHTML(i)}${fitHTML(i)}
+   ${dz}${vibeHTML(i)}${whyHTML(i,s)}
    ${i.notes?`<div class="note">Note: ${esc(i.notes)}</div>`:''}
-   ${dz}</div></div>`;
+   <details class="more"${s?'':' open'}><summary>${s?'Her hair and other good fits':'Her hair'}</summary><div><div class="hair"><span class="t">${i.texture==='?'?'Hair — check IG':esc(i.texture)}</span>${esc(i.hair||'Profile photos not viewable, check on Instagram')}</div>${suitsHTML(i)}${fitHTML(i)}</div></details></div></div>`;
 }
 function filtered(){
   const styHas=state.sty&&INF.some(i=>A[i.no]===state.sty); // a stylist with nobody yet shows her best-fit influencers instead of an empty page
@@ -507,7 +524,7 @@ function styPanelHTML(s){
   const c=loadFor(s.name),load=SLOTS.filter(k=>c[k]).map(k=>`${c[k]} in ${SLOTLBL[k]}`).join(' · ');
   return `<div class="stypanel"><img src="${s.pic}" alt=""><div class="spi"><div class="spn">${esc(s.name)}</div><div class="legend">${esc(s.role||'Stylist')}${s.loc?' · '+esc(s.loc):''}</div>
     ${(s.skills||[]).length?`<div class="sk">${s.skills.map(k=>`<b>${esc(k)}</b>`).join('')}</div>`:''}
-    ${(s.pers||[]).length?`<div class="pinfo"><b>Personality:</b> ${s.pers.map(esc).join(' · ')}</div><div class="pinfo"><b>Best for:</b> ${esc(s.best)}</div><div class="pinfo"><b>Specialises in:</b> ${s.spec.map(esc).join(' · ')}</div>`:'<div class="pinfo legend">No staff card yet, so no personality on file</div>'}
+    ${(s.pers||[]).length?`<div class="pinfo"><b>Personality:</b> ${s.pers.map(esc).join(' · ')}</div><div class="pinfo"><b>Best for:</b> ${esc(s.best)}</div><div class="pinfo"><b>Specialises in:</b> ${s.spec.map(esc).join(' · ')}</div>`:`${s.best?`<div class="pinfo"><b>Best for:</b> ${esc(s.best)}</div><div class="pinfo"><b>Specialises in:</b> ${s.spec.map(esc).join(' · ')}</div>`:''}<div class="pinfo legend">No staff card yet${s.best?': taken from her Phorest bookings':', so no personality on file'}</div>`}
     <div class="legend pl-long">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>(SUIT_ICON[k]||'')+' '+esc(k)).join(' · '):'No poll vote'}</div>
     <div class="legend pl-short">${(s.suits||[]).length?'Poll picks: '+s.suits.map(k=>`<span title="${esc(k)}">${SUIT_ICON[k]||''}</span>`).join(' '):'No poll vote'}</div>
     <div class="spc">${mine.length?`Allocated to ${mine.length}${load?' ('+load+')':''}`:'Not allocated yet · her best-fit influencers are below'}</div>
@@ -547,7 +564,7 @@ function openM(no){
   const nv=ig?i.ig_posts.filter(p=>p.t==='v').length:0;
   const fit=bestFit(i);
   const btns=STY.map(s=>{const c=loadFor(s.name)[i.slot];return `<button class="${A[no]===s.name?'on':''} ${fit.includes(s.name)?'fitb':''}" data-s="${esc(s.name)}"><img src="${s.pic}" alt="">${fit.includes(s.name)?'★ ':''}${esc(s.name)}<small>${c} in ${SLOTLBL[i.slot]}</small></button>`}).join('')+(A[no]?`<button class="clear" data-s="">Clear</button>`:'');
-  $('#mbox').innerHTML=`<div class="mhead">${i.pic?`<img src="${i.pic}" alt="">`:''}<div><h3>${esc(i.name)}</h3><div class="legend">${SLOTLBL[i.slot]} · ${esc(i.followers)} followers · <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a></div><div class="hair" style="margin-top:8px"><span class="t">${esc(i.texture)}</span>${esc(i.hair||'Check on Instagram')}</div><div style="margin-top:6px">${vibeHTML(i)}</div><div style="margin-top:6px">${suitsHTML(i)}</div><div style="margin-top:6px">${fitHTML(i)}</div></div><button class="x" id="mx">×</button></div>
+  $('#mbox').innerHTML=`<div class="mhead">${i.pic?`<img src="${i.pic}" alt="">`:''}<div><h3>${esc(i.name)}</h3><div class="legend">${SLOTLBL[i.slot]} · ${esc(i.followers)} followers · <a class="ig" href="${esc(i.ig)}" target="_blank" rel="noopener">@${esc(i.handle)} ↗</a></div><div class="hair" style="margin-top:8px"><span class="t">${esc(i.texture)}</span>${esc(i.hair||'Check on Instagram')}</div><div style="margin-top:6px">${vibeHTML(i)}</div>${A[i.no]?`<div style="margin-top:6px">${whyHTML(i,styBy(A[i.no]))}</div>`:''}<div style="margin-top:6px">${suitsHTML(i)}</div><div style="margin-top:6px">${fitHTML(i)}</div></div><button class="x" id="mx">×</button></div>
   <div class="legend">Allocate a stylist</div><div class="mstys">${btns}</div>${ig?`<div class="galhd"><div class="legend">Latest ${ig} posts${nv?`, ${nv} of them video. Press play to watch here`:''}</div></div>`:''}<div class="gal ${ig?'ig':''}">${gal}</div>`;
   $('#modal').dataset.no=no;$('#modal').classList.add('open');setURL();
   $('#mx').onclick=closeM;
@@ -669,16 +686,28 @@ $('#stylists').addEventListener('click',e=>{
   state.sty=state.sty===t.dataset.s?null:t.dataset.s;render();scrollTo({top:0,behavior:'smooth'});
 });
 
+// Both exports are a seating list: per time slot, each stylist and who sits with her (what Frans needs on the night).
+// Same order everywhere: slot, then stylist A-Z, then influencer number; anyone without a stylist is listed last in her slot.
+function seating(){
+  return SLOTS.map(slot=>{const l=INF.filter(i=>i.slot===slot);if(!l.length)return null;
+    const by={};l.filter(i=>A[i.no]).forEach(i=>(by[A[i.no]]=by[A[i.no]]||[]).push(i));
+    return{slot,rows:Object.keys(by).sort().map(n=>({sty:n,inf:by[n]})),open:l.filter(i=>!A[i.no])}}).filter(Boolean);
+}
 $('#copy').onclick=()=>{
-  let t='*MediCube x Attria — Stylist Allocation*\n';
-  SLOTS.forEach(s=>{const l=INF.filter(i=>i.slot===s);if(!l.length)return;t+=`\n*${SLOTLBL[s]}*\n`;l.forEach(i=>t+=`• ${i.name} (@${i.handle}) → ${A[i.no]||'TBC'}\n`)});
-  t+='\n*By stylist*\n';STY.forEach(st=>{const l=INF.filter(i=>A[i.no]===st.name);if(l.length)t+=`• ${st.name}: ${l.map(i=>`${i.name} (${SLOTLBL[i.slot]})`).join(', ')}\n`});
-  navigator.clipboard.writeText(t).then(()=>toast('Copied — paste into WhatsApp'),()=>{prompt('Copy this:',t)});
+  const done=INF.filter(i=>A[i.no]).length;
+  let t=`*MediCube x Attria · Who sits with whom*\n24 Sep · ${done} of ${INF.length} matched\n`;
+  seating().forEach(g=>{t+=`\n*${SLOTLBL[g.slot]}*\n`;g.rows.forEach(r=>t+=`${r.sty}: ${r.inf.map(i=>i.name).join(', ')}\n`);
+    if(g.open.length)t+=`_No stylist yet:_ ${g.open.map(i=>i.name).join(', ')}\n`});
+  navigator.clipboard.writeText(t).then(()=>toast('Copied. Paste it into WhatsApp'),()=>{prompt('Copy this:',t)});
 };
 $('#csv').onclick=()=>{
-  const rows=[['No','Name','Instagram','Followers','Time Slot','Hair','Stylist','Recommended Stylist','Allocated By']].concat(INF.map(i=>[i.no,i.name,i.ig,i.followers,SLOTLBL[i.slot],i.hair||'',A[i.no]||'',bestFit(i).join(' · '),A[i.no]?BY[i.no]||'':'']));
-  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='medicube-attria-stylist-allocation.csv';a.click();
+  const rows=[['Time','Stylist','No','Influencer','Instagram','Followers','Her vibe','Why this stylist','Her hair','Allocated by']];
+  seating().forEach(g=>{
+    g.rows.forEach(r=>{const st=styBy(r.sty);r.inf.forEach(i=>rows.push([SLOTLBL[g.slot],r.sty,i.no,i.name,'@'+i.handle,i.followers,i.vibe||'',whyHTML(i,st).replace(/<[^>]+>/g,'').replace(/^Why [^?]+\? /,''),i.hair||'',BY[i.no]||'']))});
+    g.open.forEach(i=>rows.push([SLOTLBL[g.slot],'No stylist yet',i.no,i.name,'@'+i.handle,i.followers,i.vibe||'','',i.hair||'','']));
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='medicube-attria-seating.csv';a.click();
 };
 const URLP=new URLSearchParams(location.search); // read before render(), which rewrites the address bar
 if(URLP.get('stylist')&&styBy(URLP.get('stylist')))state.sty=URLP.get('stylist');
